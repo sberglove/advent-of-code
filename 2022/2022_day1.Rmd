@@ -1,25 +1,29 @@
 ---
-title: "Advent of Code 2022"
+title: "Advent of Code 2022 - Day 1"
 author: "Sara Berg-Love"
-date: "2022-12-02"
+date: "2022-12-01"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
+# Libraries
 library(tidyverse)
 library(meltr)
 
+# Load in file
 file <- here::here("data/day1")
 ```
 
 ```{r}
+# Save data as 
 calories <- 
   melt_delim(file, delim = "null")
 ```
 
 ```{r}
+# Assign caloric items to elves by counting up when hit "null" row
 i <- 1
 j <- 1
 
@@ -35,6 +39,7 @@ j <- 1
 
 
 ```{r}
+# Clean up calories data
 calories <- 
   calories %>% 
   select(col, value) %>% 
@@ -45,12 +50,15 @@ calories <-
 
 
 ```{r}
+# Sum total calories by elf
 calories %>% 
   group_by(elf) %>% 
   summarize(sum = sum(cals)) %>% 
   arrange(desc(sum))
 ```
+
 ```{r}
+# Sum total calories for top 3 elves
 calories %>% 
   group_by(elf) %>% 
   summarize(sum = sum(cals)) %>% 
