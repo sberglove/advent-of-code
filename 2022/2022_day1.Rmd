@@ -13,11 +13,11 @@ library(tidyverse)
 library(meltr)
 
 # Load in file
-file <- here::here("data/day1")
+file <- here::here("2022/data/day1")
 ```
 
 ```{r}
-# Save data as 
+# Save data as non-rectangular data
 calories <- 
   melt_delim(file, delim = "null")
 ```
@@ -38,7 +38,7 @@ j <- 1
 ```
 
 
-```{r}
+```{r, warning = FALSE}
 # Clean up calories data
 calories <- 
   calories %>% 

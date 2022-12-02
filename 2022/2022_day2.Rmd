@@ -1,0 +1,125 @@
+---
+title: "Advent of Code 2022 - Day 2"
+author: "Sara Berg-Love"
+date: "2022-12-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Libraries
+library(tidyverse)
+
+# Load in file
+file <- here::here("2022/data/day2")
+
+# Info
+#  Opponent
+#    A = rock
+#    B = paper
+#    C = scissors
+#  Response v1
+#    X = rock
+#    Y = paper
+#    Z = scissors
+#  Response v2
+#    X = lose
+#    Y = draw
+#    Z = win
+#  Score
+#    1 = rock
+#    2 = paper
+#    3 = scissors
+#    0 = lose
+#    3 = draw
+#    6 = win
+```
+
+```{r}
+# Save data
+guide <- read_delim(file, col_names = FALSE)
+```
+
+```{r}
+# Recode data
+opponent_recode <- 
+  c("A" = "1", "B" = "2", "C" = "3")
+
+response_recode <- 
+  c("X" = "1", "Y" = "2", "Z" = "3")
+
+guide_recoded <- 
+  guide %>% 
+  mutate(
+    opponent = 
+      as.integer(recode(X1, !!! opponent_recode, .default = X1)),
+    response = 
+      as.integer(recode(X2, !!! response_recode))
+    )
+```
+
+```{r}
+
+guide_results <- 
+  guide_recoded %>% 
+  mutate(
+    result = case_when(
+      response == opponent ~ 3,
+      response - opponent == 1 ~ 6,
+      response - opponent == -2 ~ 6,
+      response - opponent == -1 ~ 0,
+      response - opponent == 2 ~ 0
+    ),
+    score = response + result
+  )
+```
+
+```{r}
+guide_results %>% 
+  summarize(sum(score))
+```
+
+```{r}
+result_recode <- 
+  c("X" = "0", "Y" = "3", "Z" = "6")
+
+guide_recoded_v2 <- 
+  guide_recoded %>% 
+  mutate(
+    result = 
+      as.integer(recode(X2, !!! result_recode, .default = X2)),
+    ) %>% 
+  select(-response)
+```
+
+```{r}
+calc_response <- function(opponent, result) {
+  if (result == 3) {
+    return(opponent)
+  } else if (result == 0 && opponent != 1) {
+    return(opponent - 1)
+  } else if (result == 0) {
+    return(3)
+  } else if (result == 6 && opponent != 3) {
+    return(opponent + 1)
+  } else {
+    return(1)
+  }
+}
+```
+
+```{r}
+guide_results_v2 <- 
+  guide_recoded_v2 %>% 
+  mutate(
+    response = map2_dbl(opponent, result, calc_response),
+    score = response + result
+  )
+```
+
+
+```{r}
+guide_results_v2 %>% 
+  summarize(sum(score))
+```
