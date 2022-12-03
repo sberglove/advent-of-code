@@ -5,6 +5,8 @@ date: "2022-12-01"
 output: github_document
 ---
 
+https://adventofcode.com/2022/day/1
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
