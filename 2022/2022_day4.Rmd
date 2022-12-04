@@ -1,0 +1,81 @@
+---
+title: "Advent of Code 2022 - Day 4"
+author: "Sara Berg-Love"
+date: "2022-12-04"
+output: github_document
+---
+
+https://adventofcode.com/2022/day/4 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# Libraries
+library(tidyverse)
+
+# Load in file
+file <- here::here("2022/data/day4")
+```
+
+```{r, message = FALSE}
+# Save data
+assignments <- read_delim(file, col_names = c("assignment1", "assignment2"))
+```
+
+```{r}
+# Split assignments into start and end columns of each assignment
+assignments_splitting <- 
+  assignments %>% 
+  mutate(
+    assignment1_start = 
+      as.integer(map(assignment1, ~str_extract(.x, "[:digit:]+(?=-)"))),
+    assignment1_end = 
+      as.integer(map(assignment1, ~str_extract(.x, "(?<=-)[:digit:]+"))),
+    assignment2_start = 
+      as.integer(map(assignment2, ~str_extract(.x, "[:digit:]+(?=-)"))),
+    assignment2_end = 
+      as.integer(map(assignment2, ~str_extract(.x, "(?<=-)[:digit:]+")))
+  ) 
+```
+
+```{r}
+# If assignment one is contained within assignment 2 or vice versa, mark the
+# overlap as true
+assignments_splitting_star1 <- 
+  assignments_splitting %>% 
+  mutate(
+    overlap = case_when(
+      assignment1_start >= assignment2_start & 
+        assignment1_end <= assignment2_end ~ TRUE,
+      assignment2_start >= assignment1_start & 
+        assignment2_end <= assignment1_end ~ TRUE
+    )
+  )
+```
+
+
+```{r}
+# Calculate total of true overlap values
+assignments_splitting_star1 %>% 
+  summarize(total_non_na = sum(!is.na(overlap)))
+```
+
+```{r}
+# If assignment one starts after assignment two ends, or vice versa, mark the
+# overlap as true
+assignments_splitting_star2 <- 
+  assignments_splitting %>% 
+  mutate(
+    overlap = case_when(
+      assignment2_end < assignment1_start ~ FALSE,
+      assignment1_end < assignment2_start ~ FALSE
+    )
+  )
+```
+
+```{r}
+# Calculate total of not false overlap values
+assignments_splitting_star2 %>% 
+  summarize(total_non_na = length(overlap) - sum(!is.na(overlap)))
+```
+
