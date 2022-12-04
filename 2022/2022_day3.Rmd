@@ -39,7 +39,7 @@ items <-
     size = str_length(backpack),
     compartment1 = str_sub(backpack, start = 1, end = size / 2),
     compartment2 = str_sub(backpack, start = size / 2 + 1, end = -1)
-    )
+  )
 ```
 
 
